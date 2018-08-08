@@ -10,12 +10,13 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-require("kable")
-require("png")
-require("knitr")
-require("grid")
-require("leaps")
+if("kable" %in% rownames(installed.packages("kable")) == FALSE){install.packages("kable")}
+if("png" %in% rownames(installed.packages("png")) == FALSE){install.packages("png")}
+if("knitr" %in% rownames(installed.packages("knitr")) == FALSE){install.packages("knitr")}
+if("grid" %in% rownames(installed.packages("grid")) == FALSE){install.packages("grid")}
+if("leaps" %in% rownames(installed.packages("leaps")) == FALSE){install.packages("leaps")}
 
+library(kable)
 library(knitr)
 library(png)
 library(grid)
