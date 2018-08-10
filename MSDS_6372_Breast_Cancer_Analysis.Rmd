@@ -5,21 +5,32 @@ date: "August 5, 2018"
 output: 
   word_document:
         reference_docx: ./template/template2.docx
+#output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-require("kable")
-require("png")
-require("knitr")
-require("grid")
-require("leaps")
+#Check if library is installed, and if no install
+#if("png" %in% rownames(installed.packages()) == FALSE) {}
+#if("kable" %in% rownames(installed.packages()) == FALSE) {install.packages("kable", dependencies=TRUE, repos = "http://cran.us.r-project.org")}
+#if("knitr" %in% rownames(installed.packages()) == FALSE) {install.packages("knitr")}
+#if("leaps" %in% rownames(installed.packages()) == FALSE) {install.packages("leaps")}
 
-library(knitr)
+#install.packages("png")
+#install.packages("kableExtra")
+#install.packages("condformat")
+#install.packages("dyplr")
+#install.packages("devtools")
+#devtools::install_github("ropenscilabs/packagemetrics")
+
 library(png)
-library(grid)
-library(leaps)
+#library(kableExtra)
+library(condformat)
+library(knitr)
+library(devtools)
+library(packagemetrics)
+
 ```
 
 ```{r datafile, echo=FALSE}
@@ -77,9 +88,9 @@ Outcome | ??? | ???
 
 # Exploratory Data Analysis
 
-```{r EDA1, echo=FALSE}
+```{r EDA1, echo=FALSE, warning=FALSE}
 <<dataimport>>
-head(dfm_Dataset)
+condformat(head(dfm_Dataset[1:5]))
 ```
 
 ## References {.smaller}

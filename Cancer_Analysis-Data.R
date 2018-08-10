@@ -5,6 +5,7 @@
 
 # Import Data File into Data Frame
 
+
 ## @knitr dataimport
 
 # Configurable Variables
@@ -14,3 +15,4 @@ str_fileName <- "data/BreastCancer.csv"
 dfm_Dataset <- read.csv(str_fileName)
 
 # Clean Data with ? marks
+#kable(head(dfm_Dataset))
