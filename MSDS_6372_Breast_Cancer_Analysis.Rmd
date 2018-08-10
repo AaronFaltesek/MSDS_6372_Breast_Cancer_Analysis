@@ -11,6 +11,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+<<<<<<< HEAD
 #Check if library is installed, and if no install
 #if("png" %in% rownames(installed.packages()) == FALSE) {}
 #if("kable" %in% rownames(installed.packages()) == FALSE) {install.packages("kable", dependencies=TRUE, repos = "http://cran.us.r-project.org")}
@@ -24,6 +25,16 @@ knitr::opts_chunk$set(echo = TRUE)
 #install.packages("devtools")
 #devtools::install_github("ropenscilabs/packagemetrics")
 
+=======
+if("kable" %in% rownames(installed.packages("kable")) == FALSE){install.packages("kable")}
+if("png" %in% rownames(installed.packages("png")) == FALSE){install.packages("png")}
+if("knitr" %in% rownames(installed.packages("knitr")) == FALSE){install.packages("knitr")}
+if("grid" %in% rownames(installed.packages("grid")) == FALSE){install.packages("grid")}
+if("leaps" %in% rownames(installed.packages("leaps")) == FALSE){install.packages("leaps")}
+
+library(kable)
+library(knitr)
+>>>>>>> 57b0502bf208b6a9755e4402034fd951305a7490
 library(png)
 #library(kableExtra)
 library(condformat)
