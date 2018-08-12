@@ -1,18 +1,18 @@
-/*data breast_cancer_dataset;
+data breast_cancer_dataset;
 set wdata.breast_cancer;
 run;
-*/
-FILENAME REFFILE '/home/ldajani0/Stats2_proj2/BreastCancer.csv';
 
-PROC IMPORT DATAFILE=REFFILE
-    DBMS=CSV 
-    OUT=work.breast_cancer_dataset
-    REPLACE;
-    GETNAMES=YES;
-RUN;
-
-proc means data=breast_cancer_dataset;
-run;
+/* FILENAME REFFILE '/home/ldajani0/Stats2_proj2/BreastCancer.csv'; */
+/*  */
+/* PROC IMPORT DATAFILE=REFFILE */
+/*     DBMS=CSV  */
+/*     OUT=work.breast_cancer_dataset */
+/*     REPLACE; */
+/*     GETNAMES=YES; */
+/* RUN; */
+/*  */
+/* proc means data=breast_cancer_dataset; */
+/* run; */
 
 data breast_cancer_dataset_2;
 set breast_cancer_dataset;
@@ -149,6 +149,23 @@ run;
 
 /* 12.8 */
 proc logistic data=breast_cancer_dataset_2 DESCENDING;
-model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit;
+model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit;
+ROC 'MainEffects' clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
+
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit selection=FORWARD;
+ROC 'MainEffects' clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
+
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit selection=stepwise;
+ROC 'MainEffects' clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
 run;
 
