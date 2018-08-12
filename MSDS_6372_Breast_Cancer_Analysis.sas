@@ -134,21 +134,54 @@ title "Scatterplot Matrix of Breast Cancer Variables";
 matrix new_outcome marg_adhes / Diagonal=(Histogram);
 run;
 
-
-
-
-
-
 proc reg data=breast_cancer_dataset_2 PLOTS=ALL PLOTS;
 model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size bare_nuclei bland_chro normal_nucleoli mitosis /clb VIF;
 title 'Regression of (Outcome)';
 run;
 
-
 /* EDA Ends */
 
 /* 12.8 */
 proc logistic data=breast_cancer_dataset_2 DESCENDING;
-model new_outcome= clump_thick unif_cellsize unit_cellshape marg_adhes epi_cell_size bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit;
+model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit;
 run;
 
+/* Model 1: Full Simple Model (all variables and no interactions) */
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare;
+ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
+
+/* Model 2: Manual Reduced model (obvious non-significant variables extracted from model 1) */
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize marg_adhes  
+bare_nuclei bland_chro / ctable lackfit rsquare;
+ROC 'MainEffects' clump_thick unif_cellsize marg_adhes 
+bare_nuclei bland_chro ;
+run;
+
+/* Model 3a: Stepwise Reduced model */
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=stepwise;
+ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
+
+/* Model 3b: Stepwise Reduced model */
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=FORWARD;
+ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
+
+/* Model 3c: Stepwise Reduced model */
+proc logistic data=breast_cancer_dataset_2 DESCENDING;
+model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=backward;
+ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+run;
