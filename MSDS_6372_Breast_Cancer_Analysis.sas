@@ -23,6 +23,28 @@ if outcome=2 then new_outcome=0;
 if outcome=4 then new_outcome=1;
 run;
 
+data temp;
+set breast_cancer_dataset_2;
+n=ranuni(8);
+proc sort data=temp;
+  by n;
+  data breast_cancer_training breast_cancer_testing;
+   set temp nobs=nobs;
+   if _n_<=.7*nobs then output breast_cancer_training;
+    else output breast_cancer_testing;
+   run;
+   
+proc export data=breast_cancer_training 
+dbms=csv 
+outfile='/home/afaltesek0/my_courses/scratchSpace/STATS_6372/Project_2/breast_cancer_training.csv';
+run;
+
+proc export data=breast_cancer_testing 
+dbms=csv 
+outfile='/home/afaltesek0/my_courses/scratchSpace/STATS_6372/Project_2/breast_cancer_testing.csv';
+run;
+
+
 /* Correlation */
 PROC CORR DATA = breast_cancer_dataset_2;
 RUN;
@@ -151,63 +173,64 @@ run;quit;
 /* 12.8 */
 
 /* Model 1: Full Simple Model (all variables and no interactions) */
-proc logistic data=breast_cancer_dataset_2 DESCENDING;
+proc logistic data=breast_cancer_training DESCENDING;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare;
-ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
-bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 /* Model 2: Manual Reduced model (obvious non-significant variables extracted from model 1) */
-proc logistic data=breast_cancer_dataset_2 DESCENDING;
+proc logistic data=breast_cancer_training DESCENDING;
 model new_outcome= clump_thick unif_cellsize marg_adhes  
 bare_nuclei bland_chro / ctable lackfit rsquare;
 ROC 'MainEffects' clump_thick unif_cellsize marg_adhes 
 bare_nuclei bland_chro ;
+score data=breast_cancer_testing fitstat ;
 run;
 
 /* Model 3a: Stepwise Reduced model */
-proc logistic data=breast_cancer_dataset_2 DESCENDING plots=all;
+proc logistic data=breast_cancer_training DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=stepwise;
-ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
-bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 /* Model 3b: Stepwise FORWARD model */
-proc logistic data=breast_cancer_dataset_2 DESCENDING;
+proc logistic data=breast_cancer_training DESCENDING;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=FORWARD;
 ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 /* Model 3c: Stepwise backward model */
-proc logistic data=breast_cancer_dataset_2 DESCENDING;
+proc logistic data=breast_cancer_training DESCENDING;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=backward;
 ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 
 /* Objective 2: Complex Logistic Regression */
 /* Interactions with stepwise selection */
-proc logistic data=breast_cancer_dataset_2 DESCENDING plots=all;
+proc logistic data=breast_cancer_training DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis unif_cellsize*unif_cellshape unif_cellsize*epi_cell_size bland_chro*normal_nucleoli / ctable lackfit rsquare selection=stepwise;
 ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 /* Objective 2: Complex Logistic Regression */
 /* Interactions without selection (force inclusion of all variables) */
-proc logistic data=breast_cancer_dataset_2 DESCENDING plots=all;
+proc logistic data=breast_cancer_training DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis 
 unif_cellsize*unif_cellshape unif_cellsize*epi_cell_size bland_chro*normal_nucleoli / ctable lackfit rsquare;
-ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
-bare_nuclei bland_chro normal_nucleoli mitosis;
+score data=breast_cancer_testing fitstat ;
 run;
 
 
@@ -215,7 +238,7 @@ run;
 /* log(mitosis) added */
 
 data breast_cancer_dataset_complex;
-set breast_cancer_dataset_2;
+set breast_cancer_training;
 log_mitosis=log(mitosis);
 run;
 
