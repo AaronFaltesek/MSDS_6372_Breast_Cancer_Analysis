@@ -185,14 +185,20 @@ model new_outcome= clump_thick unif_cellsize marg_adhes
 bare_nuclei bland_chro / ctable lackfit rsquare;
 ROC 'MainEffects' clump_thick unif_cellsize marg_adhes 
 bare_nuclei bland_chro ;
-score data=breast_cancer_testing fitstat ;
+score data=breast_cancer_testing fitstat;
 run;
 
 /* Model 3a: Stepwise Reduced model */
 proc logistic data=breast_cancer_training DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=stepwise;
-score data=breast_cancer_testing fitstat ;
+score data=breast_cancer_testing fitstat  out=pred_one ;
+run;
+
+
+proc tabulate data=pred_one;
+class new_outcome i_new_outcome;
+table new_outcome,i_new_outcome;
 run;
 
 /* Model 3b: Stepwise FORWARD model */
@@ -201,8 +207,9 @@ model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_
 bare_nuclei bland_chro normal_nucleoli mitosis / ctable lackfit rsquare selection=FORWARD;
 ROC 'MainEffects' clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis;
-score data=breast_cancer_testing fitstat ;
+score data=breast_cancer_testing fitstat;
 run;
+
 
 /* Model 3c: Stepwise backward model */
 proc logistic data=breast_cancer_training DESCENDING;
@@ -230,8 +237,10 @@ proc logistic data=breast_cancer_training DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli mitosis 
 unif_cellsize*unif_cellshape unif_cellsize*epi_cell_size bland_chro*normal_nucleoli / ctable lackfit rsquare;
-score data=breast_cancer_testing fitstat ;
 run;
+
+
+
 
 
 /* Objective 2: Complex Logistic Regression */
@@ -242,8 +251,19 @@ set breast_cancer_training;
 log_mitosis=log(mitosis);
 run;
 
+data breast_cancer_complex_test;
+set breast_cancer_testing;
+log_mitosis=log(mitosis);
+run;
+
 proc logistic data=breast_cancer_dataset_complex DESCENDING plots=all;
 model new_outcome= clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
 bare_nuclei bland_chro normal_nucleoli log_mitosis 
 unif_cellsize*unif_cellshape unif_cellsize*epi_cell_size bland_chro*normal_nucleoli / ctable lackfit rsquare;
+score data=breast_cancer_complex_test fitstat out=pred_two ;
+run;
+
+proc tabulate data=pred_two;
+class f_new_outcome i_new_outcome;
+table f_new_outcome,i_new_outcome;
 run;
