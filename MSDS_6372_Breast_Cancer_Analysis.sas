@@ -267,3 +267,23 @@ proc tabulate data=pred_two;
 class f_new_outcome i_new_outcome;
 table f_new_outcome,i_new_outcome;
 run;
+
+/* LDA/QDA Tests*/
+
+/* Run Discrim proc */
+title 'Run Discrim proc regular dataset';
+proc discrim data=breast_cancer_dataset_2 pool=test crossvalidate list;
+class new_outcome;
+var clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+priors "0"=.65 "1"=.35;
+run;
+
+/* Run Discrim proc Train/Test */
+title 'Run Discrim proc Train/Test';
+proc discrim data=breast_cancer_training pool=test testdata=breast_cancer_testing list testlist;
+class new_outcome;
+var clump_thick unif_cellsize unif_cellshape marg_adhes epi_cell_size 
+bare_nuclei bland_chro normal_nucleoli mitosis;
+priors "0"=.65 "1"=.35;
+run;
