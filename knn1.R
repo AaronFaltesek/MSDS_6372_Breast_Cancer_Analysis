@@ -13,18 +13,14 @@ validation <- read.csv("data/breast_cancer_testing.csv", header = TRUE)
 train <- train[,2:11]
 train_outcome <- sapply(train$Outcome, function(x) if (x > 3) {"M"} else {"B"})
 train <- cbind(train, train_outcome)
-train <- train[,-10]
+train <- train[,-10] #removed ID line and recoded 0 and 1 to B and M, respectively
+
 validation <- validation[,2:11]
 validation_outcome <- sapply(validation$Outcome, function(x) if (x > 3) {"M"} else {"B"})
 validation <- cbind(validation, validation_outcome)
-validation <- validation[,-10]
+validation <- validation[,-10] #removed ID line and recoded 0 and 1 to B and M, respectively
 
-dim(train)
-dim(validation)
-names(train)
-head(train)
-head(validation)
-
+# model training
 trc = trainControl(method = "repeatedcv",
                  number = 10, # k-fold
                  repeats = 3,
