@@ -6,16 +6,10 @@ library(caret)
 library(e1071)
 library(ROCR)
 
-#data <- read.csv("data/BreastCancer_titled_ed.csv", header = TRUE)
-#dataID <- data[,1]
-#data <- data[,2:11]
-
-#index = createDataPartition(data$Outcome, p = 0.7, list = F )
-#train = data[index,]
-#validation = data[-index,]
-
+# Read in Data
 train <-read.csv("data/breast_cancer_training.csv", header = TRUE)
 validation <- read.csv("data/breast_cancer_testing.csv", header = TRUE)
+
 train <- train[,2:11]
 train_outcome <- sapply(train$Outcome, function(x) if (x > 3) {"M"} else {"B"})
 train <- cbind(train, train_outcome)
